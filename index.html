@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VideoFacile AI</title>
+  <meta name="description" content="Crea copioni, scene, prompt, copertine e testi social per video promozionali." />
+  <meta name="theme-color" content="#0b1f3a" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="icon" href="assets/icon-192.png" />
+  <link rel="apple-touch-icon" href="assets/icon-192.png" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="hero">
+      <div class="hero__overlay"></div>
+      <nav class="topbar">
+        <div class="brand">
+          <img src="assets/icon-192.png" alt="Logo VideoFacile AI" />
+          <div>
+            <strong>VideoFacile AI</strong>
+            <span>Studio video per social</span>
+          </div>
+        </div>
+        <button id="installBtn" class="ghost-btn hidden">Installa App</button>
+      </nav>
+
+      <section class="hero-content">
+        <div class="badge">PWA installabile • prompt video • copioni • social kit</div>
+        <h1>Crea video promozionali in pochi minuti</h1>
+        <p>
+          Inserisci l’idea, scegli lo stile e genera subito copione parlato, scene, prompt per immagini/video AI,
+          copertina, descrizione e hashtag.
+        </p>
+        <div class="hero-actions">
+          <a href="#creator" class="primary-btn">Crea un video</a>
+          <button id="demoBtn" class="secondary-btn">Esempio Segnala Facile</button>
+        </div>
+      </section>
+    </header>
+
+    <main>
+      <section id="creator" class="panel creator-grid">
+        <div class="card input-card">
+          <div class="section-title">
+            <span>1</span>
+            <div>
+              <h2>Dati del video</h2>
+              <p>Compila i campi e premi “Genera progetto”.</p>
+            </div>
+          </div>
+
+          <form id="videoForm">
+            <label>
+              Titolo o prodotto da promuovere
+              <input id="title" type="text" placeholder="Es. Segnala Facile" required />
+            </label>
+
+            <label>
+              Cosa deve comunicare il video?
+              <textarea id="goal" rows="4" placeholder="Es. Convincere i cittadini a scaricare l’app per inviare segnalazioni, recensire locali e scoprire luoghi da visitare." required></textarea>
+            </label>
+
+            <div class="two-cols">
+              <label>
+                Piattaforma
+                <select id="platform">
+                  <option value="TikTok / Reel verticale">TikTok / Reel verticale</option>
+                  <option value="Facebook">Facebook</option>
+                  <option value="YouTube Shorts">YouTube Shorts</option>
+                  <option value="Video presentazione">Video presentazione</option>
+                </select>
+              </label>
+
+              <label>
+                Durata
+                <select id="duration">
+                  <option value="30 secondi">30 secondi</option>
+                  <option value="45 secondi">45 secondi</option>
+                  <option value="60 secondi">60 secondi</option>
+                  <option value="90 secondi">90 secondi</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="two-cols">
+              <label>
+                Stile
+                <select id="style">
+                  <option value="virale ed emozionale">Virale ed emozionale</option>
+                  <option value="cinematografico">Cinematografico</option>
+                  <option value="istituzionale e professionale">Istituzionale</option>
+                  <option value="urban moderno">Urban moderno</option>
+                  <option value="familiare e rassicurante">Familiare</option>
+                </select>
+              </label>
+
+              <label>
+                Numero scene
+                <select id="scenesCount">
+                  <option value="5">5 scene</option>
+                  <option value="6" selected>6 scene</option>
+                  <option value="8">8 scene</option>
+                </select>
+              </label>
+            </div>
+
+            <label>
+              Pubblico
+              <input id="audience" type="text" placeholder="Es. cittadini, giovani, famiglie, attività locali" />
+            </label>
+
+            <label>
+              Link o invito finale
+              <input id="cta" type="text" placeholder="Es. Scarica l’app Segnala Facile e partecipa al cambiamento" />
+            </label>
+
+            <div class="button-row">
+              <button type="submit" class="primary-btn">Genera progetto</button>
+              <button type="button" id="clearBtn" class="danger-btn">Pulisci</button>
+            </div>
+          </form>
+        </div>
+
+        <div class="card output-card">
+          <div class="section-title">
+            <span>2</span>
+            <div>
+              <h2>Progetto generato</h2>
+              <p>Copia i testi o esporta tutto in un file.</p>
+            </div>
+          </div>
+
+          <div class="tabs">
+            <button class="tab active" data-tab="script">Copione</button>
+            <button class="tab" data-tab="storyboard">Scene</button>
+            <button class="tab" data-tab="prompts">Prompt</button>
+            <button class="tab" data-tab="cover">Copertina</button>
+            <button class="tab" data-tab="social">Social</button>
+          </div>
+
+          <div id="result" class="result empty-state">
+            <h3>Nessun progetto ancora creato</h3>
+            <p>Compila i dati a sinistra e genera il tuo primo video.</p>
+          </div>
+
+          <div class="export-row">
+            <button id="copyBtn" class="secondary-btn" disabled>Copia sezione</button>
+            <button id="downloadTxtBtn" class="secondary-btn" disabled>Scarica TXT</button>
+            <button id="downloadJsonBtn" class="secondary-btn" disabled>Scarica JSON</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel saved-panel">
+        <div class="section-title">
+          <span>3</span>
+          <div>
+            <h2>Progetti salvati</h2>
+            <p>I progetti restano salvati nel browser del tuo dispositivo.</p>
+          </div>
+        </div>
+        <div id="savedList" class="saved-list"></div>
+      </section>
+
+      <section class="panel tips-panel">
+        <h2>Come usarla</h2>
+        <div class="tips-grid">
+          <article>
+            <strong>1. Genera il progetto</strong>
+            <p>Scrivi l’idea del video e lascia che l’app prepari copione, scene e prompt.</p>
+          </article>
+          <article>
+            <strong>2. Crea immagini o clip</strong>
+            <p>Copia i prompt in Canva, CapCut, Gemini, Bing Video Creator, Pika o altri strumenti.</p>
+          </article>
+          <article>
+            <strong>3. Monta il video</strong>
+            <p>Usa il copione come voce narrante, aggiungi sottotitoli e pubblica sui social.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>VideoFacile AI • versione gratuita locale • nessun dato inviato online</p>
+    </footer>
+  </div>
+
+  <template id="sectionTemplate">
+    <div class="generated-section"></div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
