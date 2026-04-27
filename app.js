@@ -159,13 +159,15 @@ function estimateSceneDuration(duration, count) {
 }
 
 function createScenePrompt({ title, goal, style, platform, scene }) {
-  const vertical = platform.toLowerCase().includes("tiktok") || platform.toLowerCase().includes("short") || platform.toLowerCase().includes("reel");
-  return `Crea una scena video ${vertical ? "verticale 9:16" : "16:9"} in stile ${style}. Tema: ${title}. Obiettivo del video: ${goal}. Scena ${scene.number}: ${scene.title}. Visual: ${scene.visual}. Testo in sovrimpressione: "${scene.screenText}". Qualità alta, luce cinematografica, dettagli realistici, movimento camera fluido, atmosfera moderna, emozionale e professionale.`;
+  const isVertical = platform.toLowerCase().match(/tiktok|short|reel/);
+  const ar = isVertical ? "--ar 9:16" : "--ar 16:9";
+  return `Cinematic video shot, ${scene.visual}. Atmosphere: ${style}. High detail, realistic motion, professional color grading, photorealistic, 8k resolution. ${ar}`;
 }
 
 function createCoverPrompt({ title, goal, style, platform, cta }) {
-  const vertical = platform.toLowerCase().includes("tiktok") || platform.toLowerCase().includes("short") || platform.toLowerCase().includes("reel");
-  return `Crea una copertina ${vertical ? "verticale 9:16" : "orizzontale 16:9"} molto d’impatto per il video "${title}". Stile ${style}, atmosfera moderna, luminosa e virale. Deve comunicare: ${goal}. Inserire titolo grande: "${title}". Inserire invito breve: "${cta}". Composizione pulita, forte contrasto, effetto social professionale, adatta a Facebook, TikTok e Instagram.`;
+  const isVertical = platform.toLowerCase().match(/tiktok|short|reel/);
+  const ar = isVertical ? "--ar 9:16" : "--ar 16:9";
+  return `Professional promotional photography for "${title}", ${style}. Clean composition, high contrast, studio lighting, highly detailed, vibrant colors, blank space for typography. ${ar} --v 6.0`;
 }
 
 function createSocialKit({ title, goal, platform, style, audience, cta }) {
@@ -227,11 +229,15 @@ function renderProject(tab = currentTab) {
   if (tab === "prompts") {
     html = `
       <div class="generated-section">
-        <h3>Prompt per generare clip o immagini</h3>
+        <h3>Prompt per Video AI (Runway, Pika, Luma)</h3>
         ${currentProject.prompts.map(item => `
           <div class="copy-block">
-            <strong>Prompt scena ${item.scene}: ${escapeHtml(item.title)}</strong>
+            <strong>Scena ${item.scene}: ${escapeHtml(item.title)}</strong>
             <p>${escapeHtml(item.prompt)}</p>
+            <div class="bridge-actions" style="margin-top: 10px; display: flex; gap: 8px;">
+              <button class="small-btn copy-bridge" data-text="${escapeHtml(item.prompt)}">Copia Prompt</button>
+              <button class="small-btn external-bridge" onclick="window.open('https://app.runwayml.com/', '_blank')">Apri RunwayML</button>
+            </div>
           </div>
         `).join("")}
       </div>`;
@@ -240,15 +246,17 @@ function renderProject(tab = currentTab) {
   if (tab === "cover") {
     html = `
       <div class="generated-section">
-        <h3>Prompt copertina</h3>
-        <div class="copy-block"><p>${escapeHtml(currentProject.coverPrompt)}</p></div>
-        <h3>Consiglio grafico</h3>
-        <ul>
-          <li>Usa titolo grande e leggibile.</li>
-          <li>Inserisci logo o icona dell’app se disponibile.</li>
-          <li>Usa un volto, uno smartphone o una scena cittadina per aumentare l’impatto.</li>
-          <li>Formato consigliato: 1080×1920 per TikTok/Reels, 1280×720 per YouTube/Facebook orizzontale.</li>
-        </ul>
+        <h3>Prompt per Immagini AI (Midjourney, Bing, DALL-E)</h3>
+        <div class="copy-block">
+          <p>${escapeHtml(currentProject.coverPrompt)}</p>
+          <div class="bridge-actions" style="margin-top: 10px; display: flex; gap: 8px;">
+            <button class="small-btn copy-bridge" data-text="${escapeHtml(currentProject.coverPrompt)}">Copia Prompt</button>
+            <button class="small-btn external-bridge" onclick="window.open('https://www.bing.com/images/create', '_blank')">Genera Gratis su Bing</button>
+          </div>
+        </div>
+        
+        <h3 style="margin-top: 20px;">Tool per aggiungere i testi</h3>
+        <button class="secondary-btn" onclick="window.open('https://www.canva.com/', '_blank')">Impaginala su Canva</button>
       </div>`;
   }
 
@@ -265,6 +273,19 @@ function renderProject(tab = currentTab) {
   }
 
   result.innerHTML = html;
+
+  // Attiva i pulsanti ponte appena creati nel DOM
+  document.querySelectorAll(".copy-bridge").forEach(btn => {
+    btn.addEventListener("click", async (e) => {
+      const textToCopy = e.target.getAttribute("data-text");
+      try {
+        await navigator.clipboard.writeText(textToCopy);
+        toast("Prompt copiato! Incollalo nel tool AI.");
+      } catch {
+        toast("Errore nella copia.");
+      }
+    });
+  });
 }
 
 function getCurrentSectionText() {
